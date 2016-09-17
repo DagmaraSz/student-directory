@@ -39,8 +39,27 @@ def print_footer(students)
   puts "Overall, we have #{students.count} great students"
 end 
 
+def print_cohort(students)
+    #create a list (array) of the various cohorts in the student directory
+    cohort_months = []
+    students.each do |student|
+        unless cohort_months.include?(student[:cohort])
+            cohort_months << student[:cohort]
+        end
+    end
+    puts cohort_months
+    
+    #create an array of students in a given cohort
+    cohort_months.each do |cohort_month|
+        puts "The #{cohort_month} cohort: "
+        students.each do |student|
+            puts "#{student[:name]} (#{student[:cohort]} cohort) from #{student[:country]}. Hobby: #{student[:hobby]}" if student[:cohort] == cohort_month
+        end
+    end
+end
+
 
 students = input_students
 print_header
-print(students)
+print_cohort(students)
 print_footer(students)
