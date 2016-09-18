@@ -2,7 +2,7 @@
 
 def try_load_students
   filename = ARGV.first # first argument from the command line
-  return if filename.nil? # get out of the method if it isn't given
+  filename = "students.csv" if filename.nil?
   if File.exists?(filename) # if it exists
     load_students(filename)
      puts "Loaded #{@students.count} students from #{filename}"
@@ -22,22 +22,27 @@ end
 def print_menu
   puts "1. Input the students"
   puts "2. Show the students"
-  puts "3. Save the list to students.csv"
-  puts "4. Load the list from students.csv"
+  puts "3. Save the list of students"
+  puts "4. Load the list of students"
   puts "9. Exit"  
 end
 
 def process(selection)
   case selection
     when "1"
+      puts "You chose 1: Input students"
       input_students
     when "2"
+      puts "You chose 2: Show students"
       show_students
     when "3"
-      save_students
+      puts "You chose 3: Save students"
+      save_students(choose_file)
     when "4"
-      load_students
+      puts "You chose 4: Load students"
+      load_students(choose_file)
     when "9"
+      puts "You chose 9: Exit program"
       exit
     else
       puts "I don't know what you mean, try again"
@@ -94,9 +99,9 @@ def print_cohort
     end
 end
 
-def save_students
+def save_students(filename)
   # open the file for writing
-  file = File.open("students.csv", "w")
+  file = File.open(filename, "w")
   # iterate over the array of students
   @students.each do |student|
     student_data = [student[:name], student[:cohort]]
@@ -114,12 +119,12 @@ def input_students
   while input != '9' do  
     add_student(STDIN.gets)
     puts "Now we have #{@students.count} student#{@students.count != 1? 's':''}."
-    puts "Next student? If you're done, hit 9."
+    puts "Next student? If you're done, choose 9."
     input = STDIN.gets.chomp
   end
 end
 
-def load_students(filename = "students.csv")
+def load_students(filename)
   file = File.open(filename, "r")
   file.readlines.each do |line|
     add_student(line)
@@ -133,6 +138,11 @@ def add_student(input)
     country = "Unkown country" if country == nil
     hobbies = "Hobbies unspecified" if hobby == nil
     @students << {name: name, cohort: cohort.to_sym, country: country.to_sym, hobby: hobby}
+end
+
+def choose_file
+    puts "What file should we use?"
+    filename = STDIN.gets.chomp
 end
 
 try_load_students
