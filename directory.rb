@@ -1,3 +1,4 @@
+require 'csv'
 @students = []
 
 def try_load_students
@@ -100,15 +101,11 @@ def print_cohort
 end
 
 def save_students(filename)
-  # open the file for writing
-  file = File.open(filename, "w")
-  # iterate over the array of students
-  @students.each do |student|
-    student_data = [student[:name], student[:cohort]]
-    csv_line = student_data.join(",")
-    file.puts csv_line
+  CSV.open(filename, "wb") do |csv|
+    @students.each do |student|
+      csv << [student[:name], student[:cohort], student[:country], student[:hobby]]
+    end
   end
-  file.close
 end
 
 def input_students
@@ -125,18 +122,16 @@ def input_students
 end
 
 def load_students(filename)
-  file = File.open(filename, "r")
-  file.readlines.each do |line|
-    add_student(line)
+  CSV.foreach(filename) do |row|
+    add_student(row.join(','))
   end
-  file.close
 end
 
 def add_student(input)
     name, cohort, country, hobby = input.chomp.split(',')
     cohort = "November" if cohort == nil
     country = "Unkown country" if country == nil
-    hobbies = "Hobbies unspecified" if hobby == nil
+    hobby = "Hobbies unspecified" if hobby == nil
     @students << {name: name, cohort: cohort.to_sym, country: country.to_sym, hobby: hobby}
 end
 
