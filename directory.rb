@@ -44,27 +44,6 @@ def process(selection)
   end
 end
 
-def input_students
-  puts "Please enter the name of the student"
-  name = STDIN.gets.delete "\n"
-  puts "what cohort? (optional - to skip hit enter)"
-  month = STDIN.gets.chomp.to_sym
-  puts month
-  month = :november if month.empty?
-
-  while !name.empty? do  
-    @students << {name: name, cohort: month, country: :Neverland, hobby: :mischief}
-    puts "Now we have #{@students.count} student#{@students.count != 1? 's':''}."
-    puts "To finish the list, hit return twice"
-    # get another name from the user
-    puts "next name?"
-    name = STDIN.gets.delete "\n"
-    puts "their cohort?"
-    month = STDIN.gets.chomp.to_sym
-    month = :november if month.empty?
-  end
-end
-
 def show_students
   print_header
   print_students_list
@@ -127,13 +106,33 @@ def save_students
   file.close
 end
 
+def input_students
+  puts "Here you can enter the details of the student"
+  puts "Format: name, cohort, country, hobby. Only name is required"
+  input = 'not9'
+
+  while input != '9' do  
+    add_student(STDIN.gets)
+    puts "Now we have #{@students.count} student#{@students.count != 1? 's':''}."
+    puts "Next student? If you're done, hit 9."
+    input = STDIN.gets.chomp
+  end
+end
+
 def load_students(filename = "students.csv")
   file = File.open(filename, "r")
   file.readlines.each do |line|
-    name, cohort = line.chomp.split(',')
-    @students << {name: name, cohort: cohort.to_sym}
+    add_student(line)
   end
   file.close
+end
+
+def add_student(input)
+    name, cohort, country, hobby = input.chomp.split(',')
+    cohort = "November" if cohort == nil
+    country = "Unkown country" if country == nil
+    hobbies = "Hobbies unspecified" if hobby == nil
+    @students << {name: name, cohort: cohort.to_sym, country: country.to_sym, hobby: hobby}
 end
 
 try_load_students
